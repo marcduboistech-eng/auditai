@@ -26,6 +26,70 @@ except ImportError:
     REPORTLAB_AVAILABLE = False
 
 
+# SOC 2 Trust Services Criteria mapped from EU AI Act obligations
+SOC2_MAPPING = [
+    {
+        "eu_article": "Art. 12 — Automatic event logging",
+        "soc2": "CC7.1, CC7.2",
+        "description": "System activity monitored; anomalies detected",
+        "auditai_covered": True,
+    },
+    {
+        "eu_article": "Art. 14 — Human oversight (HITL)",
+        "soc2": "CC7.3, CC7.4",
+        "description": "Security events evaluated; incidents identified and responded to",
+        "auditai_covered": True,
+    },
+    {
+        "eu_article": "Risk classification per call",
+        "soc2": "CC7.3",
+        "description": "Ongoing evaluation of AI system risk events",
+        "auditai_covered": True,
+    },
+    {
+        "eu_article": "Art. 11 — Technical documentation",
+        "soc2": "CC8.1",
+        "description": "Changes to AI system documented, authorized and tested",
+        "auditai_covered": False,
+    },
+    {
+        "eu_article": "Art. 13 — Transparency to users",
+        "soc2": "CC6.7",
+        "description": "Transmission and disclosure of information restricted and controlled",
+        "auditai_covered": False,
+    },
+    {
+        "eu_article": "Art. 26 — Access to AI system",
+        "soc2": "CC6.1, CC6.6",
+        "description": "Logical access security; protection from external threats",
+        "auditai_covered": False,
+    },
+]
+
+# DORA (Reg. 2022/2554) mapping for EU financial entities
+DORA_MAPPING = [
+    {
+        "dora_article": "Art. 9 — ICT security (Protection)",
+        "eu_ai_act": "Risk classification + access controls",
+        "auditai_covered": True,
+    },
+    {
+        "dora_article": "Art. 10 — Detection",
+        "eu_ai_act": "Art. 12 — Automatic logging of AI interactions",
+        "auditai_covered": True,
+    },
+    {
+        "dora_article": "Art. 11 — Response & recovery",
+        "eu_ai_act": "Art. 14 — HITL escalation on high-risk calls",
+        "auditai_covered": True,
+    },
+    {
+        "dora_article": "Art. 17 — ICT incident reporting",
+        "eu_ai_act": "Art. 26 — Deployer declaration + audit trail",
+        "auditai_covered": False,
+    },
+]
+
 RISK_COLOR = {
     "unacceptable": "#DC2626",
     "high": "#EA580C",
@@ -109,7 +173,7 @@ def generate_report(
         ["Descripción del sistema", ei.get("system_description", "No especificada")],
         ["Caso de uso principal", ei.get("use_case", "No especificado")],
         ["Fecha de generación", _today_full()],
-        ["Versión de auditai", "0.1.0"],
+        ["Versión de auditai", "0.1.1"],
     ]
     meta_table = Table(meta_data, colWidths=[5.5 * cm, 11 * cm])
     meta_table.setStyle(_meta_table_style())
@@ -216,11 +280,51 @@ def generate_report(
     ))
     story.append(Spacer(1, 0.4 * cm))
 
+    # ── SOC 2 mapping ─────────────────────────────────────────────────────────
+    story.append(Paragraph("6. SOC 2 Type II Mapping (Trust Services Criteria)", styles["H1"]))
+    story.append(Paragraph(
+        "The following table maps EU AI Act obligations to SOC 2 Trust Services Criteria. "
+        "Criteria marked ✅ are automatically satisfied by auditai instrumentation.",
+        styles["Body"]
+    ))
+    soc2_data = [["EU AI Act Obligation", "SOC 2 Criterion", "Evidence", "Status"]]
+    for row in SOC2_MAPPING:
+        status = "✅ auditai" if row["auditai_covered"] else "⬜ Manual"
+        soc2_data.append([
+            row["eu_article"],
+            row["soc2"],
+            row["description"],
+            status,
+        ])
+    soc2_table = Table(soc2_data, colWidths=[4.8 * cm, 2.2 * cm, 6.5 * cm, 3 * cm])
+    soc2_table.setStyle(_compliance_table_style())
+    story.append(soc2_table)
+    story.append(Spacer(1, 0.4 * cm))
+
+    # ── DORA mapping ──────────────────────────────────────────────────────────
+    story.append(Paragraph(
+        "7. DORA Mapping — Digital Operational Resilience Act (Reg. 2022/2554)",
+        styles["H1"]
+    ))
+    story.append(Paragraph(
+        "For EU financial entities subject to DORA, the following table maps ICT resilience "
+        "requirements to the EU AI Act obligations covered by this deployment.",
+        styles["Body"]
+    ))
+    dora_data = [["DORA Article", "EU AI Act Mapping", "Status"]]
+    for row in DORA_MAPPING:
+        status = "✅ auditai" if row["auditai_covered"] else "⬜ Manual"
+        dora_data.append([row["dora_article"], row["eu_ai_act"], status])
+    dora_table = Table(dora_data, colWidths=[5.5 * cm, 8.5 * cm, 2.5 * cm])
+    dora_table.setStyle(_compliance_table_style())
+    story.append(dora_table)
+    story.append(Spacer(1, 0.4 * cm))
+
     # ── Footer ────────────────────────────────────────────────────────────────
     story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#D1D5DB")))
     story.append(Spacer(1, 0.2 * cm))
     story.append(Paragraph(
-        "Este informe fue generado automáticamente por auditai v0.1.0. "
+        "Este informe fue generado automáticamente por auditai v0.1.1. "
         "No constituye asesoramiento jurídico. Para decisiones de compliance definitivas, "
         "consulte con un especialista en derecho de IA europeo.",
         styles["Footer"]
@@ -251,7 +355,7 @@ def _generate_markdown_fallback(
 
     lines = [
         "# EU AI Act Deployer Compliance Report",
-        f"**auditai v0.1.0** · Regulation (EU) 2024/1689 — Article 26",
+        f"**auditai v0.1.1** · Regulation (EU) 2024/1689 — Article 26",
         "",
         "## Información del Deployer",
         f"- **Empresa:** {company_name}",
@@ -278,6 +382,20 @@ def _generate_markdown_fallback(
             f"- Eventos HITL: {stats['hitl_events']}",
             f"- Modelos: {', '.join(stats['models_used']) or '—'}",
         ]
+
+    lines += ["", "## 6. SOC 2 Type II Mapping"]
+    lines.append("| EU AI Act | SOC 2 Criterion | Evidence | Status |")
+    lines.append("|-----------|-----------------|----------|--------|")
+    for row in SOC2_MAPPING:
+        status = "✅ auditai" if row["auditai_covered"] else "⬜ Manual"
+        lines.append(f"| {row['eu_article']} | {row['soc2']} | {row['description']} | {status} |")
+
+    lines += ["", "## 7. DORA Mapping (Reg. 2022/2554)"]
+    lines.append("| DORA Article | EU AI Act Mapping | Status |")
+    lines.append("|-------------|-------------------|--------|")
+    for row in DORA_MAPPING:
+        status = "✅ auditai" if row["auditai_covered"] else "⬜ Manual"
+        lines.append(f"| {row['dora_article']} | {row['eu_ai_act']} | {status} |")
 
     lines += [
         "", "---",
@@ -371,4 +489,26 @@ def _meta_table_style():
         ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
         ("LEFTPADDING", (0, 0), (-1, -1), 8),
         ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#D1D5DB")),
+    ])
+
+
+def _compliance_table_style():
+    """Compact table style for SOC 2 / DORA mapping tables."""
+    dark_blue = colors.HexColor("#1E3A5F")
+    green_tint = colors.HexColor("#F0FDF4")
+    return TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), dark_blue),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("FONTSIZE", (0, 0), (-1, 0), 9),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, green_tint]),
+        ("FONTSIZE", (0, 1), (-1, -1), 8),
+        ("FONTNAME", (0, 1), (0, -1), "Helvetica-Bold"),
+        ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ("LEFTPADDING", (0, 0), (-1, -1), 6),
+        ("GRID", (0, 0), (-1, -1), 0.4, colors.HexColor("#D1D5DB")),
+        ("WORDWRAP", (0, 0), (-1, -1), True),
     ])
