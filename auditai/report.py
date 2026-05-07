@@ -58,7 +58,7 @@ RISK_LABEL = {
     "unknown":      "UNCLASSIFIED",
 }
 
-_VERSION = "0.1.5"
+_VERSION = "0.1.6"
 _NAVY    = "#1E3A5F"
 _DARK    = "#111827"
 _GRAY    = "#6B7280"
@@ -465,7 +465,7 @@ def _styles(content_w: float) -> dict:
 
 
 def _meta_ts() -> TableStyle:
-    """Metadata table: no colored header, just subtle alternating rows."""
+    """Metadata table: subtle alternating rows, no extra left rule."""
     return TableStyle([
         ("ROWBACKGROUNDS", (0, 0), (-1, -1), [colors.white, colors.HexColor(_LGRAY)]),
         ("FONTNAME",       (0, 0), (0, -1),  "Helvetica-Bold"),
@@ -477,7 +477,6 @@ def _meta_ts() -> TableStyle:
         ("RIGHTPADDING",   (0, 0), (-1, -1), 8),
         ("LINEBELOW",      (0, 0), (-1, -2), 0.3, colors.HexColor(_BORDER)),
         ("LINEBELOW",      (0, -1), (-1, -1), 0.3, colors.HexColor(_BORDER)),
-        ("LINEBEFORE",     (0, 0), (0, -1),  3,   colors.HexColor(_NAVY)),
     ])
 
 
