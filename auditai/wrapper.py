@@ -54,30 +54,40 @@ def wrap_client(
 
     client_type = _detect_client_type(client)
 
+    is_async = _is_async_client(client)
+
     if client_type == "anthropic":
-        return _wrap_anthropic(client, logger, classifier, risk_context, hitl_callback)
+        return (_wrap_async_anthropic if is_async else _wrap_anthropic)(
+            client, logger, classifier, risk_context, hitl_callback
+        )
     elif client_type == "openai":
-        return _wrap_openai(client, logger, classifier, risk_context, hitl_callback)
+        return (_wrap_async_openai if is_async else _wrap_openai)(
+            client, logger, classifier, risk_context, hitl_callback
+        )
     else:
         raise ValueError(
             f"Unsupported client type: {type(client).__name__}. "
-            "Supported: anthropic.Anthropic, openai.OpenAI"
+            "Supported: anthropic.Anthropic / AsyncAnthropic, openai.OpenAI / AsyncOpenAI"
         )
 
 
 def _detect_client_type(client: Any) -> str:
     module = type(client).__module__ or ""
     name = type(client).__name__ or ""
-    if "anthropic" in module or name == "Anthropic":
+    if "anthropic" in module or name in ("Anthropic", "AsyncAnthropic"):
         return "anthropic"
-    if "openai" in module or name in ("OpenAI", "AzureOpenAI"):
+    if "openai" in module or name in ("OpenAI", "AsyncOpenAI", "AzureOpenAI"):
         return "openai"
-    # Fallback: inspect for known attributes
     if hasattr(client, "messages") and hasattr(client.messages, "create"):
         return "anthropic"
     if hasattr(client, "chat") and hasattr(client.chat, "completions"):
         return "openai"
     return "unknown"
+
+
+def _is_async_client(client: Any) -> bool:
+    name = type(client).__name__
+    return "Async" in name or getattr(client, "_is_async", False)
 
 
 # ── Anthropic wrapper ─────────────────────────────────────────────────────────
@@ -231,3 +241,135 @@ class _OpenAIClientProxy:
 
 def _wrap_openai(client, logger, classifier, risk_context, hitl_callback):
     return _OpenAIClientProxy(client, logger, classifier, risk_context, hitl_callback)
+
+
+# ── Async Anthropic wrapper ───────────────────────────────────────────────────
+
+class _AsyncAnthropicMessagesProxy:
+    def __init__(self, original_messages, logger, classifier, risk_context, hitl_callback):
+        self._orig = original_messages
+        self._logger = logger
+        self._classifier = classifier
+        self._risk_context = risk_context or {}
+        self._hitl_cb = hitl_callback
+
+    async def create(self, *args, **kwargs) -> Any:
+        messages = kwargs.get("messages", [])
+        model = kwargs.get("model", "unknown")
+        response = await self._orig.create(*args, **kwargs)
+        output_text = ""
+        input_tokens = 0
+        output_tokens = 0
+        try:
+            if hasattr(response, "content") and response.content:
+                for block in response.content:
+                    if hasattr(block, "text"):
+                        output_text += block.text
+            if hasattr(response, "usage"):
+                input_tokens = getattr(response.usage, "input_tokens", 0)
+                output_tokens = getattr(response.usage, "output_tokens", 0)
+        except Exception:
+            pass
+        risk_cat = self._classifier.classify_call(
+            model=model, input_messages=messages, output_text=output_text,
+            context=self._risk_context,
+        )
+        hitl_required = self._risk_context.get("hitl_required", risk_cat in ("high", "unacceptable"))
+        call_id = self._logger.log_call(
+            model=model, provider="anthropic-async",
+            input_messages=messages, output_text=output_text,
+            input_tokens=input_tokens, output_tokens=output_tokens,
+            risk_category=str(risk_cat), hitl_required=hitl_required,
+            metadata={"args": _sanitize(str(args)[:200]) if args else ""},
+        )
+        if hitl_required and self._hitl_cb:
+            self._hitl_cb(call_id, {"model": model, "risk_category": str(risk_cat)})
+        return response
+
+    def __getattr__(self, name):
+        return getattr(self._orig, name)
+
+
+class _AsyncAnthropicClientProxy:
+    def __init__(self, client, logger, classifier, risk_context, hitl_callback):
+        self._client = client
+        self.messages = _AsyncAnthropicMessagesProxy(
+            client.messages, logger, classifier, risk_context, hitl_callback
+        )
+
+    def __getattr__(self, name):
+        return getattr(self._client, name)
+
+
+def _wrap_async_anthropic(client, logger, classifier, risk_context, hitl_callback):
+    return _AsyncAnthropicClientProxy(client, logger, classifier, risk_context, hitl_callback)
+
+
+# ── Async OpenAI wrapper ──────────────────────────────────────────────────────
+
+class _AsyncOpenAICompletionsProxy:
+    def __init__(self, original_completions, logger, classifier, risk_context, hitl_callback):
+        self._orig = original_completions
+        self._logger = logger
+        self._classifier = classifier
+        self._risk_context = risk_context or {}
+        self._hitl_cb = hitl_callback
+
+    async def create(self, *args, **kwargs) -> Any:
+        messages = kwargs.get("messages", [])
+        model = kwargs.get("model", "unknown")
+        response = await self._orig.create(*args, **kwargs)
+        output_text = ""
+        input_tokens = 0
+        output_tokens = 0
+        try:
+            if hasattr(response, "choices") and response.choices:
+                output_text = response.choices[0].message.content or ""
+            if hasattr(response, "usage"):
+                input_tokens = getattr(response.usage, "prompt_tokens", 0)
+                output_tokens = getattr(response.usage, "completion_tokens", 0)
+        except Exception:
+            pass
+        risk_cat = self._classifier.classify_call(
+            model=model, input_messages=messages, output_text=output_text,
+            context=self._risk_context,
+        )
+        hitl_required = self._risk_context.get("hitl_required", risk_cat in ("high", "unacceptable"))
+        call_id = self._logger.log_call(
+            model=model, provider="openai-async",
+            input_messages=messages, output_text=output_text,
+            input_tokens=input_tokens, output_tokens=output_tokens,
+            risk_category=str(risk_cat), hitl_required=hitl_required,
+        )
+        if hitl_required and self._hitl_cb:
+            self._hitl_cb(call_id, {"model": model, "risk_category": str(risk_cat)})
+        return response
+
+    def __getattr__(self, name):
+        return getattr(self._orig, name)
+
+
+class _AsyncOpenAIChatProxy:
+    def __init__(self, original_chat, logger, classifier, risk_context, hitl_callback):
+        self._chat = original_chat
+        self.completions = _AsyncOpenAICompletionsProxy(
+            original_chat.completions, logger, classifier, risk_context, hitl_callback
+        )
+
+    def __getattr__(self, name):
+        return getattr(self._chat, name)
+
+
+class _AsyncOpenAIClientProxy:
+    def __init__(self, client, logger, classifier, risk_context, hitl_callback):
+        self._client = client
+        self.chat = _AsyncOpenAIChatProxy(
+            client.chat, logger, classifier, risk_context, hitl_callback
+        )
+
+    def __getattr__(self, name):
+        return getattr(self._client, name)
+
+
+def _wrap_async_openai(client, logger, classifier, risk_context, hitl_callback):
+    return _AsyncOpenAIClientProxy(client, logger, classifier, risk_context, hitl_callback)

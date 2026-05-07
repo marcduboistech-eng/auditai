@@ -9,7 +9,7 @@ from .risk import RiskClassifier, RiskCategory
 from .report import generate_report
 from .langchain_callback import AuditAICallbackHandler
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 __all__ = [
     "wrap_client", "AuditLogger", "RiskClassifier", "RiskCategory",
     "generate_report", "AuditAICallbackHandler",

@@ -30,6 +30,13 @@ def main():
     p_classify = sub.add_parser("classify", help="Classify risk from answers JSON")
     p_classify.add_argument("--answers", required=True, help="JSON string with wizard answers")
 
+    # auditai proxy --port 8080 --target https://api.openai.com --project myapp
+    p_proxy = sub.add_parser("proxy", help="Run transparent HTTP proxy for zero-code instrumentation")
+    p_proxy.add_argument("--port", type=int, default=8080)
+    p_proxy.add_argument("--target", default="https://api.openai.com", help="Upstream API base URL")
+    p_proxy.add_argument("--project", required=True)
+    p_proxy.add_argument("--log-dir", default=None)
+
     # auditai dashboard --project myapp
     p_dash = sub.add_parser("dashboard", help="Launch Streamlit dashboard")
     p_dash.add_argument("--project", default="default")
@@ -70,6 +77,15 @@ def main():
             "reasons": result.reasons,
             "obligations": result.obligations,
         }, indent=2, ensure_ascii=False))
+
+    elif args.command == "proxy":
+        from auditai.proxy import run_proxy
+        run_proxy(
+            target=args.target,
+            project=args.project,
+            port=args.port,
+            log_dir=args.log_dir,
+        )
 
     elif args.command == "dashboard":
         import subprocess

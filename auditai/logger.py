@@ -16,11 +16,28 @@ except ImportError:
 
 
 class AuditLogger:
-    def __init__(self, project: str, log_dir: Optional[str] = None):
+    def __init__(
+        self,
+        project: str,
+        log_dir: Optional[str] = None,
+        max_bytes: int = 10 * 1024 * 1024,  # 10 MB
+        backup_count: int = 5,
+    ):
         self.project = project
+        self.max_bytes = max_bytes
+        self.backup_count = backup_count
         base = Path(log_dir) if log_dir else Path.home() / ".auditai" / "logs"
         base.mkdir(parents=True, exist_ok=True)
         self.log_path = base / f"{project}.jsonl"
+
+    def _rotate(self) -> None:
+        """Rotate log files when max_bytes exceeded (called with lock held)."""
+        for i in range(self.backup_count - 1, 0, -1):
+            src = self.log_path.with_suffix(f".jsonl.{i}")
+            dst = self.log_path.with_suffix(f".jsonl.{i + 1}")
+            if src.exists():
+                src.rename(dst)
+        self.log_path.rename(self.log_path.with_suffix(".jsonl.1"))
 
     def log_call(
         self,
@@ -57,6 +74,8 @@ class AuditLogger:
             if _HAS_FCNTL:
                 _fcntl.flock(f, _fcntl.LOCK_EX)
             try:
+                if self.log_path.exists() and self.log_path.stat().st_size >= self.max_bytes:
+                    self._rotate()
                 f.write(json.dumps(entry, ensure_ascii=False) + "\n")
                 f.flush()
             finally:
@@ -65,14 +84,21 @@ class AuditLogger:
         return call_id
 
     def read_all(self) -> list[dict]:
-        if not self.log_path.exists():
-            return []
+        """Read all entries including rotated backup files (oldest first)."""
+        paths = []
+        for i in range(self.backup_count, 0, -1):
+            p = self.log_path.with_suffix(f".jsonl.{i}")
+            if p.exists():
+                paths.append(p)
+        if self.log_path.exists():
+            paths.append(self.log_path)
         entries = []
-        with open(self.log_path, encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if line:
-                    entries.append(json.loads(line))
+        for path in paths:
+            with open(path, encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        entries.append(json.loads(line))
         return entries
 
     def stats(self) -> dict:
