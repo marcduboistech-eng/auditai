@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EU AI Act Annex IV Template: What Deployers Actually Need in 2026 | auditai</title>
+  <meta name="description" content="Free EU AI Act Annex IV template and Article 26 deployer checklist for 2026. Understand exactly what documentation your enterprise customers will ask for before signing." />
+  <meta name="keywords" content="EU AI Act Annex IV template, Article 26 deployer obligations, EU AI Act compliance 2026, deployer report template, high-risk AI documentation" />
+  <link rel="canonical" href="https://auditaisdk.com/blog/eu-ai-act-annex-iv-template.html" />
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; color: #1a1a2e; line-height: 1.7; }
+    h1 { font-size: 2rem; color: #0f3460; margin-bottom: 0.5rem; }
+    h2 { font-size: 1.4rem; color: #0f3460; margin-top: 2.5rem; border-left: 4px solid #e94560; padding-left: 1rem; }
+    h3 { font-size: 1.1rem; color: #333; }
+    .byline { color: #666; font-size: 0.9rem; margin-bottom: 2rem; }
+    .callout { background: #f0f4ff; border: 1px solid #c7d4ff; border-radius: 8px; padding: 1.2rem 1.5rem; margin: 2rem 0; }
+    .callout strong { color: #0f3460; }
+    .checklist { list-style: none; padding: 0; }
+    .checklist li { padding: 0.4rem 0; padding-left: 1.8rem; position: relative; }
+    .checklist li::before { content: "☐"; position: absolute; left: 0; color: #e94560; font-weight: bold; }
+    table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+    th { background: #0f3460; color: white; padding: 0.7rem 1rem; text-align: left; }
+    td { padding: 0.6rem 1rem; border-bottom: 1px solid #e0e0e0; }
+    tr:hover td { background: #f9f9f9; }
+    .cta-box { background: #0f3460; color: white; border-radius: 12px; padding: 2rem; text-align: center; margin: 3rem 0; }
+    .cta-box h3 { color: #e94560; margin-bottom: 0.5rem; font-size: 1.3rem; }
+    .cta-box p { margin: 0.5rem 0 1.5rem; opacity: 0.9; }
+    .cta-btn { background: #e94560; color: white; text-decoration: none; padding: 0.9rem 2rem; border-radius: 6px; font-weight: bold; display: inline-block; }
+    .cta-btn:hover { background: #c73652; }
+    code { background: #f4f4f8; padding: 0.2rem 0.5rem; border-radius: 4px; font-family: monospace; font-size: 0.88em; }
+    pre { background: #1a1a2e; color: #e0e0e0; padding: 1.2rem; border-radius: 8px; overflow-x: auto; font-size: 0.88em; }
+    .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem 1.2rem; border-radius: 0 6px 6px 0; margin: 1.5rem 0; }
+  </style>
+</head>
+<body>
+
+<p><a href="https://auditaisdk.com">← auditaisdk.com</a></p>
+
+<h1>EU AI Act Annex IV Template: What Deployers Actually Need in 2026</h1>
+<p class="byline">By Marc Dubois · May 2026 · 8 min read</p>
+
+<div class="callout">
+  <strong>TL;DR:</strong> Enterprise customers are now inserting EU AI Act compliance checks into vendor assessments. As a deployer of AI systems, you need an Article 26 record — not the full Annex IV technical file (that's your provider's job). This article gives you the exact checklist, a downloadable template, and the fastest way to generate it.
+</div>
+
+<p>Three months ago, a CTO of a Berlin-based legal AI startup told me he lost a €200K/year enterprise contract because the buyer's procurement team asked for "EU AI Act documentation" and he sent back a blank stare. The deal went to a competitor who had a two-page PDF ready.</p>
+
+<p>That's the 2026 EU AI Act reality for B2B AI companies: compliance is no longer a legal checkbox. It's a sales filter.</p>
+
+<h2>Wait — is Annex IV your obligation?</h2>
+
+<p>Here's the confusion most CTOs have: <strong>Annex IV technical documentation is a <em>provider</em> obligation, not a deployer obligation.</strong></p>
+
+<p>Under the EU AI Act:</p>
+
+<table>
+  <tr><th>Role</th><th>Who you are</th><th>Your obligation</th></tr>
+  <tr><td><strong>Provider</strong></td><td>You built the AI model (OpenAI, Anthropic, your in-house team)</td><td>Full Annex IV technical file: architecture, training data, test results, risk management</td></tr>
+  <tr><td><strong>Deployer</strong></td><td>You <em>use</em> an AI model in your product or service</td><td>Article 26 compliance record: use cases, human oversight, logs, incident reporting</td></tr>
+</table>
+
+<p>Most B2B AI startups are <strong>deployers</strong> — they build on top of Claude, GPT-4, or Mistral. That means the heavy Annex IV work is on Anthropic's or OpenAI's side. Your obligation is the Article 26 Deployer Record.</p>
+
+<p>But here's the catch: <em>your enterprise customers don't know the difference.</em> When their procurement team says "we need EU AI Act documentation," they want to see that you have your house in order. That means producing a clean deployer record, even if it's technically not called an Annex IV.</p>
+
+<div class="warning">
+  <strong>Deadline:</strong> August 2, 2026 — High-risk AI system requirements under Annex III come into force. Penalties: up to €35M or 7% of global annual turnover. The clock is running.
+</div>
+
+<h2>Article 26 Deployer Obligations: The Full Checklist</h2>
+
+<p>Here is what Article 26 actually requires if you're deploying a high-risk AI system (defined by Annex III — this includes HR hiring tools, credit scoring, legal interpretation, and more):</p>
+
+<ul class="checklist">
+  <li>Implement technical and organisational measures in line with the instructions for use provided by the AI provider</li>
+  <li>Assign human oversight to a natural person with competence, authority, and resources to fulfill that role</li>
+  <li>Ensure input data is relevant and sufficiently representative for the intended purpose</li>
+  <li>Monitor the AI system's operation during intended use and report incidents to the provider</li>
+  <li>Maintain logs automatically generated by the system for at least <strong>6 months</strong> (or longer if sector-specific rules apply)</li>
+  <li>Inform affected natural persons that they are subject to AI decision-making (where applicable)</li>
+  <li>Document and retain records of any conformity assessment your provider has made available to you</li>
+  <li>Register in the EU database if operating a high-risk system in publicly accessible spaces</li>
+  <li>Report serious incidents to national market surveillance authorities</li>
+</ul>
+
+<h2>The Annex IV-Style Template for Deployers</h2>
+
+<p>Even though Annex IV is technically a provider document, I recommend preparing a <strong>deployer companion document</strong> structured like Annex IV — because enterprise procurement teams expect that format. Here's the template structure:</p>
+
+<h3>Section 1: System Description</h3>
+<ul>
+  <li>Name and version of the AI system you deploy</li>
+  <li>Intended purpose and use context</li>
+  <li>Provider name (e.g., "Anthropic Claude claude-sonnet-4-6 via API")</li>
+  <li>EU AI Act risk classification (Minimal / Limited / High-Risk / Unacceptable)</li>
+  <li>Applicable Annex III categories (if high-risk)</li>
+</ul>
+
+<h3>Section 2: Human Oversight</h3>
+<ul>
+  <li>Name/role of designated human oversight officer</li>
+  <li>Oversight procedures (how decisions are reviewed)</li>
+  <li>Override and escalation procedure</li>
+  <li>Training provided to oversight personnel</li>
+</ul>
+
+<h3>Section 3: Audit Trail</h3>
+<ul>
+  <li>Log retention policy (minimum: 6 months)</li>
+  <li>What is logged per AI interaction (inputs, outputs, timestamps, model version)</li>
+  <li>Access controls on logs</li>
+  <li>Log integrity guarantees (tamper-evident storage)</li>
+</ul>
+
+<h3>Section 4: Risk Management</h3>
+<ul>
+  <li>Risk classification rationale</li>
+  <li>Known limitations communicated by provider</li>
+  <li>Mitigation measures applied</li>
+  <li>Incident reporting procedure and escalation path</li>
+</ul>
+
+<h3>Section 5: Data Governance</h3>
+<ul>
+  <li>Input data sources and validation</li>
+  <li>GDPR compliance overlap (if personal data processed)</li>
+  <li>Data retention and deletion policy</li>
+</ul>
+
+<h3>Section 6: Contact & Update Log</h3>
+<ul>
+  <li>Responsible person within deployer organisation</li>
+  <li>Document version history</li>
+  <li>Last review date</li>
+  <li>Next scheduled review</li>
+</ul>
+
+<h2>The fastest way to generate this document</h2>
+
+<p>Filling this manually takes 3–5 hours if you're doing it for the first time. The bottleneck isn't the words — it's collecting the structured audit log data to back up Section 3.</p>
+
+<p>That's exactly why I built <a href="https://auditaisdk.com">auditai</a>: a Python SDK that wraps your Claude or GPT calls, logs every interaction automatically, classifies your EU AI Act risk, and generates the Article 26 Deployer Report as a PDF. Two lines of code:</p>
+
+<pre><code>from auditai import wrap_client
+import anthropic
+
+client = wrap_client(anthropic.Anthropic(), project="my-app")
+# Every call is now logged, risk-classified, and audit-ready</code></pre>
+
+<p>Then when you need the document:</p>
+
+<pre><code>auditai report --project my-app --company "Acme GmbH" --email "cto@acme.com"</code></pre>
+
+<p>It outputs a PDF structured exactly like the template above, with real log data from your system — not placeholder text.</p>
+
+<div class="cta-box">
+  <h3>Need this done in 48 hours?</h3>
+  <p>If you've lost a deal or have a vendor assessment coming up, I'll do the full EU AI Act risk classification and Article 26 Deployer Report for your system — manually reviewed, PDF delivered, ready to send to your buyer's legal team.</p>
+  <a class="cta-btn" href="https://auditaisdk.com/managed-audit.html">Get the Managed Audit — €199</a>
+</div>
+
+<h2>When are you actually "high-risk"?</h2>
+
+<p>Most B2B AI startups overestimate their compliance burden. The Annex III high-risk categories are specific:</p>
+
+<table>
+  <tr><th>Annex III Category</th><th>Typical B2B AI Use Cases</th></tr>
+  <tr><td>Employment, workers management</td><td>AI hiring tools, CV screening, performance review AI</td></tr>
+  <tr><td>Access to essential services</td><td>AI credit scoring, loan eligibility, insurance pricing</td></tr>
+  <tr><td>Administration of justice</td><td>Legal research AI used in court proceedings</td></tr>
+  <tr><td>Critical infrastructure</td><td>AI in energy grid management, water systems</td></tr>
+  <tr><td>Education and vocational training</td><td>AI assessment tools for student performance</td></tr>
+  <tr><td>Biometric identification</td><td>Real-time facial recognition in public spaces</td></tr>
+</table>
+
+<p>If your AI product doesn't fall in these categories, you're likely <strong>limited or minimal risk</strong> — the Article 26 obligations still technically apply if you handle personal data, but the documentation is far lighter. The <code>auditai classify</code> wizard runs you through 9 questions and gives you the definitive answer.</p>
+
+<h2>What your enterprise customer actually wants to see</h2>
+
+<p>Based on deal room experience in 2026, enterprise procurement teams evaluating AI vendors want three things:</p>
+
+<ol>
+  <li><strong>A one-page risk classification summary</strong> — "We are Minimal/Limited/High-Risk because..."</li>
+  <li><strong>Evidence of audit logging</strong> — screenshots or a sample log showing inputs, outputs, timestamps</li>
+  <li><strong>A named human oversight officer</strong> — even if it's the CTO. They want a person, not a process</li>
+</ol>
+
+<p>The full 20-page Annex IV document is rarely asked for at the qualification stage. The one-pager and the logs get you through procurement. The full document closes legal review.</p>
+
+<h2>Bottom line</h2>
+
+<p>If you're a B2B AI startup selling to European enterprises, the EU AI Act is not a 2026 problem — it's a Q2 2026 <em>sales</em> problem. Enterprise buyers are asking for documentation now. The companies that have a clean PDF ready are winning deals. The ones scrambling to understand Annex IV are losing them.</p>
+
+<p>The template above is a start. The <a href="https://auditaisdk.com">auditai SDK</a> automates the hard part. And if you need it done before your next deal closes, <a href="https://auditaisdk.com/managed-audit.html">the managed audit</a> delivers a buyer-ready PDF in 48 hours for €199.</p>
+
+<p>Questions? Reply to <a href="mailto:marc@auditaisdk.com">marc@auditaisdk.com</a>.</p>
+
+<p><em>— Marc Dubois, auditaisdk.com</em></p>
+
+<hr />
+<p style="font-size:0.85rem; color:#888;">
+  Related: <a href="https://auditaisdk.com/managed-audit.html">Managed EU AI Act Audit — €199</a> ·
+  <a href="https://auditaisdk.com">auditai SDK Documentation</a> ·
+  <a href="https://pypi.org/project/auditai-sdk/">pip install auditai-sdk</a>
+</p>
+
+</body>
+</html>
