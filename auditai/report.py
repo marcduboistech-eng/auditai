@@ -9,7 +9,7 @@ from typing import Optional
 
 try:
     from reportlab.lib import colors
-    from reportlab.lib.enums import TA_CENTER, TA_LEFT, TA_RIGHT
+    from reportlab.lib.enums import TA_CENTER
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
     from reportlab.lib.units import cm, mm
@@ -324,7 +324,7 @@ def generate_report(
     story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#D1D5DB")))
     story.append(Spacer(1, 0.2 * cm))
     story.append(Paragraph(
-        "Este informe fue generado automáticamente por auditai v0.1.1. "
+        "Este informe fue generado automáticamente por auditai v0.1.3. "
         "No constituye asesoramiento jurídico. Para decisiones de compliance definitivas, "
         "consulte con un especialista en derecho de IA europeo.",
         styles["Footer"]
@@ -355,7 +355,7 @@ def _generate_markdown_fallback(
 
     lines = [
         "# EU AI Act Deployer Compliance Report",
-        f"**auditai v0.1.1** · Regulation (EU) 2024/1689 — Article 26",
+        f"**auditai v0.1.3** · Regulation (EU) 2024/1689 — Article 26",
         "",
         "## Información del Deployer",
         f"- **Empresa:** {company_name}",

@@ -70,12 +70,12 @@ class AuditLogger:
             "human_reviewed": human_reviewed,
             "metadata": metadata or {},
         }
+        if self.log_path.exists() and self.log_path.stat().st_size >= self.max_bytes:
+            self._rotate()
         with open(self.log_path, "a", encoding="utf-8") as f:
             if _HAS_FCNTL:
                 _fcntl.flock(f, _fcntl.LOCK_EX)
             try:
-                if self.log_path.exists() and self.log_path.stat().st_size >= self.max_bytes:
-                    self._rotate()
                 f.write(json.dumps(entry, ensure_ascii=False) + "\n")
                 f.flush()
             finally:

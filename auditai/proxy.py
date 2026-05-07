@@ -12,7 +12,6 @@ Works with any OpenAI-compatible API: OpenAI, Anthropic (via proxy), Ollama, vLL
 from __future__ import annotations
 
 import json
-import sys
 import urllib.error
 import urllib.request
 from http.server import BaseHTTPRequestHandler, HTTPServer

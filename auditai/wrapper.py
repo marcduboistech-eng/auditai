@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-import functools
 from typing import Any, Optional
 
 from .logger import AuditLogger
