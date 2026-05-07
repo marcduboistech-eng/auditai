@@ -117,6 +117,7 @@ def generate_report(
     log_dir: Optional[str] = None,
     output_path: Optional[str] = None,
     extra_info: Optional[dict] = None,
+    reviewed_by: Optional[str] = None,
 ) -> str:
     """Generate EU AI Act Deployer Compliance Report (PDF).
 
@@ -320,17 +321,51 @@ def generate_report(
     story.append(dora_table)
     story.append(Spacer(1, 0.4 * cm))
 
+    # ── Professional review & signature (optional) ────────────────────────────
+    if reviewed_by:
+        story.append(Paragraph("8. Professional Review &amp; Certification", styles["H1"]))
+        navy = colors.HexColor("#1E3A5F")
+        sig_box = Table(
+            [[Paragraph(
+                f"<b>This report has been manually reviewed and certified by:</b><br/><br/>"
+                f"<b style='font-size:14'>{reviewed_by}</b><br/>"
+                f"EU AI Act Compliance Consultant · auditaisdk.com<br/><br/>"
+                f"The undersigned takes professional responsibility for the accuracy of the risk "
+                f"classification and obligation mapping contained in this report, based on the "
+                f"system description provided by the deployer. This certification is issued "
+                f"under the understanding that the information provided by the client is accurate "
+                f"and complete.<br/><br/>"
+                f"Date: {_today_full()}<br/><br/>"
+                f"Signature: ___________________________",
+                styles["Body"]
+            )]],
+            colWidths=[16.5 * cm],
+        )
+        sig_box.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#EFF6FF")),
+            ("BORDER", (0, 0), (-1, -1), 1.5, navy),
+            ("BOX", (0, 0), (-1, -1), 1.5, navy),
+            ("TOPPADDING", (0, 0), (-1, -1), 16),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 16),
+            ("LEFTPADDING", (0, 0), (-1, -1), 16),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 16),
+        ]))
+        story.append(sig_box)
+        story.append(Spacer(1, 0.4 * cm))
+
     # ── Footer ────────────────────────────────────────────────────────────────
     story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#D1D5DB")))
     story.append(Spacer(1, 0.2 * cm))
-    story.append(Paragraph(
-        "Este informe fue generado automáticamente por auditai v0.1.3. "
+    footer_text = (
+        f"Reviewed and certified by {reviewed_by} · auditaisdk.com · {_today_full()}"
+        if reviewed_by else
+        "Este informe fue generado automáticamente por auditai v0.1.4. "
         "No constituye asesoramiento jurídico. Para decisiones de compliance definitivas, "
-        "consulte con un especialista en derecho de IA europeo.",
-        styles["Footer"]
-    ))
+        "consulte con un especialista en derecho de IA europeo."
+    )
+    story.append(Paragraph(footer_text, styles["Footer"]))
     story.append(Paragraph(
-        f"Generado: {_today_full()} · Contacto: {contact_email} · auditai.dev",
+        f"Generado: {_today_full()} · Contacto: {contact_email} · auditaisdk.com",
         styles["Footer"]
     ))
 

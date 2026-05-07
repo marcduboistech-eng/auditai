@@ -25,6 +25,7 @@ def main():
     p_report.add_argument("--output", default=None)
     p_report.add_argument("--log-dir", default=None)
     p_report.add_argument("--system-description", default=None)
+    p_report.add_argument("--reviewed-by", default=None, help="Name of reviewer — adds signature section to PDF")
 
     # auditai classify --answers '{"affects_credit": true, ...}'
     p_classify = sub.add_parser("classify", help="Classify risk from answers JSON")
@@ -58,6 +59,7 @@ def main():
             output_path=args.output,
             log_dir=args.log_dir,
             extra_info={"system_description": args.system_description} if args.system_description else {},
+            reviewed_by=args.reviewed_by,
         )
         print(f"Report generado: {path}")
 
