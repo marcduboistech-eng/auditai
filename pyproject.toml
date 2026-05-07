@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "auditai"
+version = "0.1.0"
+description = "EU AI Act Deployer Compliance SDK — wrap Claude/GPT, log everything, generate Art. 26 reports"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+keywords = ["eu-ai-act", "compliance", "anthropic", "openai", "audit", "gdpr"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Security",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# Core: zero mandatory deps — works with just stdlib
+dependencies = []
+
+[project.optional-dependencies]
+pdf = ["reportlab>=4.0"]
+dashboard = ["streamlit>=1.30", "pandas>=2.0"]
+anthropic = ["anthropic>=0.40"]
+openai = ["openai>=1.0"]
+all = [
+    "reportlab>=4.0",
+    "streamlit>=1.30",
+    "pandas>=2.0",
+    "anthropic>=0.40",
+    "openai>=1.0",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-mock>=3.12",
+    "black",
+    "ruff",
+    "mypy",
+]
+
+[project.scripts]
+auditai = "auditai.__main__:main"
+auditai-dashboard = "auditai.dashboard:main"
+
+[project.urls]
+Homepage = "https://auditai.dev"
+Repository = "https://github.com/inventelpk/auditai"
+"Bug Tracker" = "https://github.com/inventelpk/auditai/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["auditai*"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
