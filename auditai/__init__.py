@@ -8,5 +8,5 @@ from .logger import AuditLogger
 from .risk import RiskClassifier, RiskCategory
 from .report import generate_report
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __all__ = ["wrap_client", "AuditLogger", "RiskClassifier", "RiskCategory", "generate_report"]

@@ -2,11 +2,21 @@
 
 from __future__ import annotations
 
+import re
 import functools
 from typing import Any, Optional
 
 from .logger import AuditLogger
 from .risk import RiskClassifier
+
+# Redact API keys, Bearer tokens, and secret-looking values before logging
+_SECRET_PATTERNS = re.compile(
+    r"(sk-[A-Za-z0-9\-_]{20,}|Bearer\s+[A-Za-z0-9\-._~+/]+|api[_-]?key['\"]?\s*[:=]\s*['\"]?[A-Za-z0-9\-_]{16,})",
+    re.IGNORECASE,
+)
+
+def _sanitize(text: str) -> str:
+    return _SECRET_PATTERNS.sub("[REDACTED]", text)
 
 
 def wrap_client(
@@ -115,7 +125,7 @@ class _AnthropicMessagesProxy:
             output_tokens=output_tokens,
             risk_category=str(risk_cat),
             hitl_required=hitl_required,
-            metadata={"args": str(args)[:200] if args else ""},
+            metadata={"args": _sanitize(str(args)[:200]) if args else ""},
         )
 
         if hitl_required and self._hitl_cb:

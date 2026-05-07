@@ -8,6 +8,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
+try:
+    import fcntl as _fcntl
+    _HAS_FCNTL = True
+except ImportError:
+    _HAS_FCNTL = False  # Windows fallback
+
 
 class AuditLogger:
     def __init__(self, project: str, log_dir: Optional[str] = None):
@@ -48,7 +54,14 @@ class AuditLogger:
             "metadata": metadata or {},
         }
         with open(self.log_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+            if _HAS_FCNTL:
+                _fcntl.flock(f, _fcntl.LOCK_EX)
+            try:
+                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+                f.flush()
+            finally:
+                if _HAS_FCNTL:
+                    _fcntl.flock(f, _fcntl.LOCK_UN)
         return call_id
 
     def read_all(self) -> list[dict]:

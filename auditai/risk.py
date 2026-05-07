@@ -36,6 +36,14 @@ PROHIBITED_PATTERNS = [
 ]
 
 
+_LEGAL_DISCLAIMER = (
+    "DISCLAIMER: This assessment is generated automatically based on self-reported information "
+    "and keyword matching. It does not constitute legal advice. For regulated industries "
+    "(finance, healthcare, law enforcement) consult qualified legal counsel before relying on "
+    "this classification for compliance purposes."
+)
+
+
 @dataclass
 class RiskAssessment:
     category: RiskCategory
@@ -43,6 +51,7 @@ class RiskAssessment:
     reasons: list[str] = field(default_factory=list)
     obligations: list[str] = field(default_factory=list)
     hitl_required: bool = False
+    disclaimer: str = field(default=_LEGAL_DISCLAIMER)
 
 
 class RiskClassifier:

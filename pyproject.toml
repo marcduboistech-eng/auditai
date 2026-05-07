@@ -1,10 +1,10 @@
 [build-system]
 requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
-name = "auditai"
-version = "0.1.0"
+name = "auditai-sdk"
+version = "0.1.1"
 description = "EU AI Act Deployer Compliance SDK — wrap Claude/GPT, log everything, generate Art. 26 reports"
 readme = "README.md"
 license = {text = "MIT"}
@@ -50,8 +50,8 @@ auditai-dashboard = "auditai.dashboard:main"
 
 [project.urls]
 Homepage = "https://auditai.dev"
-Repository = "https://github.com/inventelpk/auditai"
-"Bug Tracker" = "https://github.com/inventelpk/auditai/issues"
+Repository = "https://github.com/marcduboistech-eng/auditai"
+"Bug Tracker" = "https://github.com/marcduboistech-eng/auditai/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
